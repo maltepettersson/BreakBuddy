@@ -2,6 +2,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111827">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#10131c">
@@ -199,6 +202,13 @@ function stopBreak(){
  document.getElementById('detail').textContent='Choose a break above to start';
  document.getElementById('start').style.display='block';
  document.getElementById('stop').style.display='none';
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/BreakBuddy/sw.js");
+  });
 }
 </script>
 </body>
