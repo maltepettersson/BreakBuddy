@@ -1,0 +1,17 @@
+{
+  "name": "BreakBuddy",
+  "short_name": "BreakBuddy",
+  "start_url": "/BreakBuddy/",
+  "scope": "/BreakBuddy/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
