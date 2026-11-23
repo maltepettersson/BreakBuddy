@@ -7,6 +7,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10131c">
 <title>BreakBuddy</title>
 <style>
 *{box-sizing:border-box}
@@ -76,44 +77,21 @@ input{width:100%;background:#111722;color:white;border:1px solid #3b4558;border-
  <button class="save" onclick="saveSettings()">SAVE SETTINGS</button>
 </div>
 
-<div class="note">BreakBuddy · Your breaks, your timing.<br>Notifications work best when BreakBuddy is installed and notification permissions are enabled.</div>
+<div class="note">BreakBuddy · Your breaks, your timing.<br>Keep this app open while a timer is running for the most reliable reminders.</div>
 </div>
-
 <script>
 const defaults={
  morning:15,morningBuffer:3,
  lunch:30,lunchBuffer:3,
  afternoon:15,afternoonBuffer:3
 };
-
 let settingsData={...defaults};
 let active=null,interval=null,leaveAlerted=false,endAlerted=false;
-let notificationRegistration=null;
 
 try{
  const saved=JSON.parse(localStorage.getItem('bbSettings'));
- if(saved)settingsData={...defaults,...saved};
+ if(saved) settingsData={...defaults,...saved};
 }catch(e){}
-
-async function initNotifications(){
- if(!('serviceWorker' in navigator))return;
- try{
-  notificationRegistration=await navigator.serviceWorker.ready;
- }catch(e){
-  console.error('Service worker unavailable:',e);
- }
-}
-
-if('serviceWorker' in navigator){
- window.addEventListener('load',()=>{
-  navigator.serviceWorker.register('/BreakBuddy/sw.js')
-   .then(reg=>{
-    notificationRegistration=reg;
-    console.log('BreakBuddy service worker ready');
-   })
-   .catch(err=>console.error('Service worker error:',err));
- });
-}
 
 function loadSettings(){
  Object.keys(settingsData).forEach(k=>{
@@ -134,8 +112,10 @@ function saveSettings(){
  Object.keys(defaults).forEach(k=>{
   let v=Number(document.getElementById(k).value);
   if(!Number.isFinite(v))v=defaults[k];
-  const max=k.endsWith('Buffer')?60:240;
-  settingsData[k]=Math.max(k.endsWith('Buffer')?0:1,Math.min(max,v));
+  settingsData[k]=Math.max(0,Math.min(240,v));
+ });
+ ['morning','lunch','afternoon'].forEach(k=>{
+  settingsData[k]=Math.max(1,settingsData[k]);
  });
  localStorage.setItem('bbSettings',JSON.stringify(settingsData));
  loadSettings();
@@ -149,77 +129,45 @@ async function askNotification(){
   return false;
  }
  if(Notification.permission==='default'){
-  try{
-   await Notification.requestPermission();
-  }catch(e){
-   console.error(e);
-  }
+  try{await Notification.requestPermission()}catch(e){}
  }
- if(Notification.permission!=='granted'){
-  alert('Please allow notifications in your browser settings.');
-  return false;
- }
- try{
-  if(!notificationRegistration){
-   notificationRegistration=await navigator.serviceWorker.ready;
-  }
- }catch(e){
-  console.error(e);
-  alert('Could not connect to the notification service.');
-  return false;
- }
- return true;
+ return Notification.permission==='granted';
 }
 
-async function notify(title,message,tag){
- if(!('Notification' in window)||Notification.permission!=='granted')return;
- try{
-  if(!notificationRegistration){
-   notificationRegistration=await navigator.serviceWorker.ready;
+async function notify(title,message){
+ try {
+  const registration = await navigator.serviceWorker.ready;
+
+  if(Notification.permission === 'granted'){
+   await registration.showNotification(title,{
+    body:message,
+    icon:'/BreakBuddy/icon.svg',
+    tag:'breakbuddy-'+title,
+    vibrate:[300,150,300]
+   });
   }
-  await notificationRegistration.showNotification(title,{
-   body:message,
-   icon:'/BreakBuddy/icon.svg',
-   badge:'/BreakBuddy/icon.svg',
-   tag:tag,
-   renotify:true,
-   vibrate:[300,150,300,150,500],
-   requireInteraction:true
-  });
- }catch(e){
-  console.error('Notification failed:',e);
- }
- if(navigator.vibrate){
-  navigator.vibrate([300,150,300,150,500]);
+ } catch(error) {
+  console.error('Notification error:',error);
  }
 }
 
 async function startBreak(name){
- if(active&&!confirm('Replace your current timer?'))return;
-
- const allowed=await askNotification();
- if(!allowed)return;
-
+ if(active && !confirm('Replace your current timer?'))return;
  let key='morning';
  if(name==='Lunch')key='lunch';
  if(name==='Afternoon coffee')key='afternoon';
-
  const total=settingsData[key]*60;
  const buffer=settingsData[key+'Buffer']*60;
- const now=Date.now();
-
+ await askNotification();
  active={
   name:name,
-  end:now+total*1000,
-  leave:now+(total-buffer)*1000
+  end:Date.now()+total*1000,
+  leave:Date.now()+(total-buffer)*1000
  };
-
  leaveAlerted=false;
  endAlerted=false;
-
  document.getElementById('start').style.display='none';
  document.getElementById('stop').style.display='inline-block';
-
  tick();
  clearInterval(interval);
  interval=setInterval(tick,500);
@@ -227,31 +175,27 @@ async function startBreak(name){
 
 function tick(){
  if(!active)return;
-
  const now=Date.now();
  const leaveLeft=Math.max(0,Math.ceil((active.leave-now)/1000));
  const endLeft=Math.max(0,Math.ceil((active.end-now)/1000));
  const remaining=now<active.leave?leaveLeft:endLeft;
-
  document.getElementById('timer').textContent=
   String(Math.floor(remaining/60)).padStart(2,'0')+':'+
   String(remaining%60).padStart(2,'0');
 
- if(!leaveAlerted&&now>=active.leave){
+ if(!leaveAlerted && now>=active.leave){
   leaveAlerted=true;
   document.getElementById('status').textContent='🚶 TIME TO HEAD BACK!';
   document.getElementById('detail').textContent='Start heading back to production now.';
-  notify('☕ Time to head back!','Start heading back to production now.','breakbuddy-return');
+  notify('☕ Time to head back!','Start heading back to production now.');
  }
-
- if(!endAlerted&&now>=active.end){
+ if(!endAlerted && now>=active.end){
   endAlerted=true;
   document.getElementById('status').textContent='BREAK IS OVER!';
   document.getElementById('detail').textContent='Your official break time has ended.';
-  notify('BreakBuddy','Your break is over. Time to be back at work!','breakbuddy-end');
+  notify('BreakBuddy','Your break is over. Time to be back at work!');
   clearInterval(interval);
  }
-
  if(!leaveAlerted){
   document.getElementById('status').textContent=active.name.toUpperCase();
   document.getElementById('detail').textContent='Time until you need to head back.';
@@ -263,12 +207,18 @@ function stopBreak(){
  active=null;
  leaveAlerted=false;
  endAlerted=false;
-
  document.getElementById('timer').textContent='00:00';
  document.getElementById('status').textContent='READY FOR YOUR BREAK?';
  document.getElementById('detail').textContent='Choose a break above to start';
  document.getElementById('start').style.display='block';
  document.getElementById('stop').style.display='none';
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/BreakBuddy/sw.js");
+  });
 }
 </script>
 </body>
