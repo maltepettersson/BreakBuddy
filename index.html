@@ -3,212 +3,225 @@
 <html lang="en">
 <head>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111827">
+<meta name="theme-color" content="#123D2A">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#10131c">
 <title>BreakBuddy</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#10131c;color:#f4f5fa;font-family:Arial,sans-serif;padding:22px 17px}
+:root{
+--bg:#102F21;--dark:#123D2A;--panel:#1B4932;
+--card:#24583A;--green:#A9CC8B;--light:#D8E9CB;
+--text:#F2F5EC;--muted:#B7CCB0;--border:#477451;
+--stripe:repeating-linear-gradient(90deg,
+#123D2A 0px,#123D2A 9px,
+#A9CC8B 9px,#A9CC8B 17px,
+#24583A 17px,#24583A 26px,
+#C4DDA9 26px,#C4DDA9 34px);
+}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:Arial,sans-serif;padding:22px 17px}
 .app{max-width:440px;margin:auto}
-header{display:flex;justify-content:space-between;align-items:center;margin:12px 0 30px}
-h1{font-size:27px;margin:0}
-.sub{color:#9299aa;font-size:12px;margin-top:6px}
+header{display:flex;justify-content:space-between;align-items:center;margin:12px 0 15px}
+h1{font-size:27px;margin:0;letter-spacing:-.5px}
+.sub{color:var(--muted);font-size:11px;margin-top:6px;letter-spacing:1.4px;font-weight:bold}
+.brand-stripes{height:13px;width:100%;background:var(--stripe);border-radius:5px;margin-bottom:27px}
 button{border:0;cursor:pointer;font:inherit;color:inherit}
-.settings{background:#252b39;border-radius:13px;padding:12px}
-h2{font-size:17px;margin:20px 0 13px}
+.settings{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px}
+h2{font-size:17px;margin:20px 0 13px;color:var(--light)}
 .breaks{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.break{background:#202635;border:1px solid #30394c;border-radius:16px;padding:17px 5px;min-height:112px}
+.break{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:17px 5px;min-height:112px}
+.break:before{content:"";position:absolute;top:0;left:0;width:100%;height:7px;background:var(--stripe)}
 .break:active,.primary:active{transform:scale(.97)}
-.emoji{font-size:25px}
+.emoji{font-size:25px;margin-top:4px}
 .break strong{display:block;font-size:13px;margin:10px 0 5px}
-.break small{color:#aab2c4}
-.panel{background:#202635;border:1px solid #30394c;border-radius:19px;padding:22px;margin-top:20px;text-align:center}
-.status{color:#aab2c4;font-size:13px}
-.timer{font-size:62px;font-weight:700;letter-spacing:2px;margin:16px 0}
-.detail{color:#aab2c4;font-size:13px;line-height:1.7}
-.primary{width:100%;background:#8b9cff;color:#10131c;font-weight:bold;border-radius:14px;padding:17px;margin-top:17px}
-.stop{background:#343b4b;border-radius:12px;padding:12px 22px;margin-top:12px}
-.settings-panel{display:none;background:#202635;border-radius:17px;padding:18px;margin-top:18px}
-label{display:block;color:#c5cada;font-size:13px;margin:13px 0 6px}
-input{width:100%;background:#111722;color:white;border:1px solid #3b4558;border-radius:10px;padding:12px;font-size:16px}
-.save{background:#8b9cff;color:#10131c;font-weight:bold;border-radius:11px;padding:13px;width:100%;margin-top:17px}
-.note{color:#818a9e;font-size:11px;line-height:1.5;margin-top:23px;text-align:center}
+.break small{color:var(--muted)}
+.panel{position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--border);border-radius:17px;padding:25px 22px 22px;margin-top:22px;text-align:center}
+.panel:before{content:"";position:absolute;top:0;left:0;width:100%;height:9px;background:var(--stripe)}
+.status{color:var(--green);font-size:13px;font-weight:bold;letter-spacing:.7px;margin-top:4px}
+.timer{font-size:62px;font-weight:700;letter-spacing:2px;color:var(--light);margin:16px 0;font-variant-numeric:tabular-nums}
+.detail{color:var(--muted);font-size:13px;line-height:1.7}
+.primary{width:100%;background:var(--green);color:#123D2A;font-weight:bold;border-radius:11px;padding:17px;margin-top:17px;letter-spacing:.5px}
+.stop{background:#345C42;color:var(--light);border:1px solid var(--border);border-radius:11px;padding:12px 22px;margin-top:12px}
+.settings-panel{display:none;position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:18px;margin-top:18px}
+.settings-panel:before{content:"";display:block;height:8px;background:var(--stripe);margin:-18px -18px 18px}
+.settings-panel h2{margin-top:10px}
+label{display:block;color:var(--light);font-size:13px;margin:13px 0 6px}
+input{width:100%;background:#102F21;color:white;border:1px solid var(--border);border-radius:9px;padding:12px;font-size:16px}
+input:focus{outline:2px solid var(--green)}
+.save{background:var(--green);color:#123D2A;font-weight:bold;border-radius:11px;padding:13px;width:100%;margin-top:17px}
+.note{color:#A6BDA1;font-size:11px;line-height:1.6;margin-top:24px;text-align:center}
+@media(max-width:350px){body{padding:16px 11px}.timer{font-size:54px}.break{padding:15px 3px}}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
- <div><h1>☕ BreakBuddy</h1><div class="sub">YOUR WORK BREAK ASSISTANT</div></div>
- <button class="settings" onclick="toggleSettings()">⚙️</button>
+<div><h1>☕ BreakBuddy</h1><div class="sub">YOUR WORK BREAK ASSISTANT</div></div>
+<button class="settings" onclick="toggleSettings()">⚙️</button>
 </header>
+
+<div class="brand-stripes"></div>
 
 <h2>Choose your break</h2>
 <div class="breaks">
- <button class="break" onclick="startBreak('Morning coffee')">
-  <div class="emoji">☕</div><strong>Morning</strong><small id="morningLabel">15 min</small>
- </button>
- <button class="break" onclick="startBreak('Lunch')">
-  <div class="emoji">🍽️</div><strong>Lunch</strong><small id="lunchLabel">30 min</small>
- </button>
- <button class="break" onclick="startBreak('Afternoon coffee')">
-  <div class="emoji">☕</div><strong>Afternoon</strong><small id="afternoonLabel">15 min</small>
- </button>
+<button class="break" onclick="startBreak('Morning coffee')">
+<div class="emoji">☕</div><strong>Morning</strong><small id="morningLabel">15 min</small>
+</button>
+<button class="break" onclick="startBreak('Lunch')">
+<div class="emoji">🍽️</div><strong>Lunch</strong><small id="lunchLabel">30 min</small>
+</button>
+<button class="break" onclick="startBreak('Afternoon coffee')">
+<div class="emoji">☕</div><strong>Afternoon</strong><small id="afternoonLabel">15 min</small>
+</button>
 </div>
 
 <div class="panel">
- <div class="status" id="status">READY FOR YOUR BREAK?</div>
- <div class="timer" id="timer">00:00</div>
- <div class="detail" id="detail">Choose a break above to start</div>
- <button class="primary" id="start" onclick="startBreak('Coffee break')">START BREAK</button>
- <button class="stop" id="stop" onclick="stopBreak()" style="display:none">Cancel timer</button>
+<div class="status" id="status">READY FOR YOUR BREAK?</div>
+<div class="timer" id="timer">00:00</div>
+<div class="detail" id="detail">Choose a break above to start</div>
+<button class="primary" id="start" onclick="startBreak('Coffee break')">START BREAK</button>
+<button class="stop" id="stop" onclick="stopBreak()" style="display:none">Cancel timer</button>
 </div>
 
 <div class="settings-panel" id="settings">
- <h2>⚙️ Break settings</h2>
- <label>Morning coffee – official minutes</label><input id="morning" type="number" min="1" max="240" value="15">
- <label>Morning coffee – minutes to get back</label><input id="morningBuffer" type="number" min="0" max="60" value="3">
- <label>Lunch – official minutes</label><input id="lunch" type="number" min="1" max="240" value="30">
- <label>Lunch – minutes to get back</label><input id="lunchBuffer" type="number" min="0" max="60" value="3">
- <label>Afternoon coffee – official minutes</label><input id="afternoon" type="number" min="1" max="240" value="15">
- <label>Afternoon coffee – minutes to get back</label><input id="afternoonBuffer" type="number" min="0" max="60" value="3">
- <button class="save" onclick="saveSettings()">SAVE SETTINGS</button>
+<h2>⚙️ Break settings</h2>
+<label>Morning coffee – official minutes</label><input id="morning" type="number" min="1" max="240" value="15">
+<label>Morning coffee – minutes to get back</label><input id="morningBuffer" type="number" min="0" max="60" value="3">
+<label>Lunch – official minutes</label><input id="lunch" type="number" min="1" max="240" value="30">
+<label>Lunch – minutes to get back</label><input id="lunchBuffer" type="number" min="0" max="60" value="3">
+<label>Afternoon coffee – official minutes</label><input id="afternoon" type="number" min="1" max="240" value="15">
+<label>Afternoon coffee – minutes to get back</label><input id="afternoonBuffer" type="number" min="0" max="60" value="3">
+<button class="save" onclick="saveSettings()">SAVE SETTINGS</button>
 </div>
 
 <div class="note">BreakBuddy · Your breaks, your timing.<br>Keep this app open while a timer is running for the most reliable reminders.</div>
 </div>
+
 <script>
-const defaults={
- morning:15,morningBuffer:3,
- lunch:30,lunchBuffer:3,
- afternoon:15,afternoonBuffer:3
-};
+const defaults={morning:15,morningBuffer:3,lunch:30,lunchBuffer:3,afternoon:15,afternoonBuffer:3};
 let settingsData={...defaults};
 let active=null,interval=null,leaveAlerted=false,endAlerted=false;
 
 try{
- const saved=JSON.parse(localStorage.getItem('bbSettings'));
- if(saved) settingsData={...defaults,...saved};
+const saved=JSON.parse(localStorage.getItem('bbSettings'));
+if(saved)settingsData={...defaults,...saved};
 }catch(e){}
 
 function loadSettings(){
- Object.keys(settingsData).forEach(k=>{
-  document.getElementById(k).value=settingsData[k];
- });
- ['morning','lunch','afternoon'].forEach(k=>{
-  document.getElementById(k+'Label').textContent=settingsData[k]+' min';
- });
+Object.keys(settingsData).forEach(k=>{
+document.getElementById(k).value=settingsData[k];
+});
+['morning','lunch','afternoon'].forEach(k=>{
+document.getElementById(k+'Label').textContent=settingsData[k]+' min';
+});
 }
 loadSettings();
 
 function toggleSettings(){
- const el=document.getElementById('settings');
- el.style.display=el.style.display==='block'?'none':'block';
+const el=document.getElementById('settings');
+el.style.display=el.style.display==='block'?'none':'block';
 }
 
 function saveSettings(){
- Object.keys(defaults).forEach(k=>{
-  let v=Number(document.getElementById(k).value);
-  if(!Number.isFinite(v))v=defaults[k];
-  settingsData[k]=Math.max(0,Math.min(240,v));
- });
- ['morning','lunch','afternoon'].forEach(k=>{
-  settingsData[k]=Math.max(1,settingsData[k]);
- });
- localStorage.setItem('bbSettings',JSON.stringify(settingsData));
- loadSettings();
- document.getElementById('settings').style.display='none';
- alert('Settings saved!');
+Object.keys(defaults).forEach(k=>{
+let v=Number(document.getElementById(k).value);
+if(!Number.isFinite(v))v=defaults[k];
+settingsData[k]=Math.max(0,Math.min(240,v));
+});
+['morning','lunch','afternoon'].forEach(k=>{
+settingsData[k]=Math.max(1,settingsData[k]);
+});
+localStorage.setItem('bbSettings',JSON.stringify(settingsData));
+loadSettings();
+document.getElementById('settings').style.display='none';
+alert('Settings saved!');
 }
 
 async function askNotification(){
- if(!('Notification' in window)){
-  alert('Notifications are not supported in this browser.');
-  return false;
- }
- if(Notification.permission==='default'){
-  try{await Notification.requestPermission()}catch(e){}
- }
- return Notification.permission==='granted';
+if(!('Notification' in window)){
+alert('Notifications are not supported in this browser.');
+return false;
+}
+if(Notification.permission==='default'){
+try{await Notification.requestPermission()}catch(e){}
+}
+return Notification.permission==='granted';
 }
 
 function notify(title,message){
- if('Notification' in window && Notification.permission==='granted'){
-  try{new Notification(title,{body:message,tag:'breakbuddy-'+title})}catch(e){}
- }
- if(navigator.vibrate)navigator.vibrate([300,150,300]);
+if('Notification' in window && Notification.permission==='granted'){
+try{new Notification(title,{body:message,tag:'breakbuddy-'+title})}catch(e){}
+}
+if(navigator.vibrate)navigator.vibrate([300,150,300]);
 }
 
 async function startBreak(name){
- if(active && !confirm('Replace your current timer?'))return;
- let key='morning';
- if(name==='Lunch')key='lunch';
- if(name==='Afternoon coffee')key='afternoon';
- const total=settingsData[key]*60;
- const buffer=settingsData[key+'Buffer']*60;
- await askNotification();
- active={
-  name:name,
-  end:Date.now()+total*1000,
-  leave:Date.now()+(total-buffer)*1000
- };
- leaveAlerted=false;
- endAlerted=false;
- document.getElementById('start').style.display='none';
- document.getElementById('stop').style.display='inline-block';
- tick();
- clearInterval(interval);
- interval=setInterval(tick,500);
+if(active && !confirm('Replace your current timer?'))return;
+let key='morning';
+if(name==='Lunch')key='lunch';
+if(name==='Afternoon coffee')key='afternoon';
+const total=settingsData[key]*60;
+const buffer=settingsData[key+'Buffer']*60;
+await askNotification();
+active={name:name,end:Date.now()+total*1000,leave:Date.now()+(total-buffer)*1000};
+leaveAlerted=false;
+endAlerted=false;
+document.getElementById('start').style.display='none';
+document.getElementById('stop').style.display='inline-block';
+tick();
+clearInterval(interval);
+interval=setInterval(tick,500);
 }
 
 function tick(){
- if(!active)return;
- const now=Date.now();
- const leaveLeft=Math.max(0,Math.ceil((active.leave-now)/1000));
- const endLeft=Math.max(0,Math.ceil((active.end-now)/1000));
- const remaining=now<active.leave?leaveLeft:endLeft;
- document.getElementById('timer').textContent=
-  String(Math.floor(remaining/60)).padStart(2,'0')+':'+
-  String(remaining%60).padStart(2,'0');
+if(!active)return;
+const now=Date.now();
+const leaveLeft=Math.max(0,Math.ceil((active.leave-now)/1000));
+const endLeft=Math.max(0,Math.ceil((active.end-now)/1000));
+const remaining=now<active.leave?leaveLeft:endLeft;
+document.getElementById('timer').textContent=
+String(Math.floor(remaining/60)).padStart(2,'0')+':'+
+String(remaining%60).padStart(2,'0');
 
- if(!leaveAlerted && now>=active.leave){
-  leaveAlerted=true;
-  document.getElementById('status').textContent='🚶 TIME TO HEAD BACK!';
-  document.getElementById('detail').textContent='Start heading back to production now.';
-  notify('☕ Time to head back!','Start heading back to production now.');
- }
- if(!endAlerted && now>=active.end){
-  endAlerted=true;
-  document.getElementById('status').textContent='BREAK IS OVER!';
-  document.getElementById('detail').textContent='Your official break time has ended.';
-  notify('BreakBuddy','Your break is over. Time to be back at work!');
-  clearInterval(interval);
- }
- if(!leaveAlerted){
-  document.getElementById('status').textContent=active.name.toUpperCase();
-  document.getElementById('detail').textContent='Time until you need to head back.';
- }
+if(!leaveAlerted && now>=active.leave){
+leaveAlerted=true;
+document.getElementById('status').textContent='🚶 TIME TO HEAD BACK!';
+document.getElementById('detail').textContent='Start heading back to production now.';
+notify('☕ Time to head back!','Start heading back to production now.');
+}
+if(!endAlerted && now>=active.end){
+endAlerted=true;
+document.getElementById('status').textContent='BREAK IS OVER!';
+document.getElementById('detail').textContent='Your official break time has ended.';
+notify('BreakBuddy','Your break is over. Time to be back at work!');
+clearInterval(interval);
+}
+if(!leaveAlerted){
+document.getElementById('status').textContent=active.name.toUpperCase();
+document.getElementById('detail').textContent='Time until you need to head back.';
+}
 }
 
 function stopBreak(){
- clearInterval(interval);
- active=null;
- leaveAlerted=false;
- endAlerted=false;
- document.getElementById('timer').textContent='00:00';
- document.getElementById('status').textContent='READY FOR YOUR BREAK?';
- document.getElementById('detail').textContent='Choose a break above to start';
- document.getElementById('start').style.display='block';
- document.getElementById('stop').style.display='none';
+clearInterval(interval);
+active=null;
+leaveAlerted=false;
+endAlerted=false;
+document.getElementById('timer').textContent='00:00';
+document.getElementById('status').textContent='READY FOR YOUR BREAK?';
+document.getElementById('detail').textContent='Choose a break above to start';
+document.getElementById('start').style.display='block';
+document.getElementById('stop').style.display='none';
 }
 </script>
+
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/BreakBuddy/sw.js");
-  });
+if("serviceWorker" in navigator){
+window.addEventListener("load",()=>{
+navigator.serviceWorker.register("/BreakBuddy/sw.js");
+});
 }
 </script>
 </body>
